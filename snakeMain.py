@@ -2,70 +2,47 @@ import pygame, random, sys
 import numpy as np
 
 
-class maze:
+class Maze:
     def __init__(self, world):
         self.world = world
         self.worldShape = world.shape
         self.stateSize = self.worldShape[0] * self.worldShape[1]
-        self.endGame = False
+        self.gameRunning = True
         self.reward = self.makereward()
 
         self.mapSize = 100
         self.actions = {'U', 'D', 'L', 'R'}
 
     # Functions for going between the two representations
-    def state2coord(self, s):
+    def stateTocoo(self, s):
         # transfer state to grid world coordinate (x,y)
-        row = int(s / self.worldShape[1])
-        col = np.mod(s, self.worldShape[1])
-        return row, col
+        r = int(s / self.worldShape[1])
+        c = np.mod(s, self.worldShape[1])
+        return r, c
 
-    def coord2state(self, c):
+    def cooTostate(self, c):
         # transfer grid world coordinate (x,y) to state
         return c[0] * self.worldShape[1] + c[1]
 
-    def numNbrs(self, s):
-        nbrs = 0
-        r, c = self.state2coord(s)
-        if r > 0 and self.world[r - 1, c] == 0:
-            nbrs += 1
-        if r < self.worldShape[0] - 1 and self.world[r + 1, c] == 0:
-            nbrs += 1
-        if c > 0 and self.world[r, c - 1] == 0:
-            nbrs += 1
-        if c < self.worldShape[1] - 1 and self.world[r, c + 1] == 0:
-            nbrs += 1
-        return nbrs
-
-    def nbrList(self, s):
+    def neighborsList(self, s):
         # returns neighbors index of a given state (0-79)
         nbrs = []
-        r, c = self.state2coord(s)
-        if r > 0 and self.world[r - 1, c] == 0:
-            nbrs.append(self.coord2state((r - 1, c)))
-        if r < self.worldShape[0] - 1 and self.world[r + 1, c] == 0:
-            nbrs.append(self.coord2state((r + 1, c)))
-        if c > 0 and self.world[r, c - 1] == 0:
-            nbrs.append(self.coord2state((r, c - 1)))
-        if c < self.worldShape[1] - 1 and self.world[r, c + 1] == 0:
-            nbrs.append(self.coord2state((r, c + 1)))
-        return nbrs
-
-    def actionList(self, s):
-        nbrs = []
-        r, c = self.state2coord(s)
-        if r > 0 and self.world[r - 1, c] == 0:
-            nbrs.append('U')
-        if r < self.worldShape[0] - 1 and self.world[r + 1, c] == 0:
-            nbrs.append('D')
-        if c > 0 and self.world[r, c - 1] == 0:
-            nbrs.append('L')
-        if c < self.worldShape[1] - 1 and self.world[r, c + 1] == 0:
-            nbrs.append('R')
+        r, c = self.stateTocoo(s)
+        if r > 0:
+            nbrs.append(self.cooTostate((r - 1, c)))
+        if r < self.worldShape[0] - 1:
+            nbrs.append(self.cooTostate((r + 1, c)))
+        if c > 0:
+            nbrs.append(self.cooTostate((r, c - 1)))
+        if c < self.worldShape[1] - 1:
+            nbrs.append(self.cooTostate((r, c + 1)))
         return nbrs
 
 
 
+    '''
+    Reward with only maze
+    '''
     def makereward(self):
         print("Reward")
         return np.array([
@@ -82,6 +59,19 @@ class maze:
         [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2]])
 
 
+class SnakePlayer:
+    def __init__(self, maze):
+        self.body_length = 2
+        self.tail_state = 71
+        self.body_state = {60,71}
+        self.current_action = 'U'
+        self.actions = {'U', 'D', 'L', 'R'}
+        self.maze = maze
+
+    def increase_length(self):
+        self.body_length = self.body_length + 1
+
+
 if __name__=="__main__":
 
     iniState = np.array([
@@ -96,8 +86,7 @@ if __name__=="__main__":
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
-
-    snakeMaze = maze(np.array([
+    snakeMaze = Maze(np.array([
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -109,5 +98,5 @@ if __name__=="__main__":
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]))
-    print(snakeMaze.actionList(0))
-    print("Done")
+    r,c = snakeMaze.stateTocoo(60)
+    print(iniState[r][c])
