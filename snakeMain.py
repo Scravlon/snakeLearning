@@ -38,7 +38,16 @@ class Maze:
             nbrs.append(self.cooTostate((r, c + 1)))
         return nbrs
 
-
+    def neightborAction(self,s,a):
+        r, c = self.stateTocoo(s)
+        if a == 'U':
+            return self.cooTostate((r-1, c))
+        elif a == 'D':
+            return self.cooTostate((r+1, c))
+        elif a == 'L':
+            return self.cooTostate((r, c-1))
+        elif a == 'R':
+            return self.cooTostate((r, c+1))
 
     '''
     Reward with only maze
@@ -63,13 +72,24 @@ class SnakePlayer:
     def __init__(self, maze):
         self.body_length = 2
         self.tail_state = 71
-        self.body_state = {60,71}
+        self.body_state = [60,71]
         self.current_action = 'U'
         self.actions = {'U', 'D', 'L', 'R'}
         self.maze = maze
 
     def increase_length(self):
         self.body_length = self.body_length + 1
+
+    '''
+    Move the snake to a new state with the current action
+    '''
+    def moveSnake(self):
+        for i in range(1,len(self.body_state)):
+            length = len(self.body_state)-i
+            self.body_state[length] = self.body_state[length-1]
+        self.body_state[0] = self.maze.neightborAction(self.body_state[0], self.current_action)
+
+        #update state too
 
 
 if __name__=="__main__":
@@ -100,3 +120,15 @@ if __name__=="__main__":
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]))
     r,c = snakeMaze.stateTocoo(60)
     print(iniState[r][c])
+    snakePlayer = SnakePlayer(snakeMaze)
+    print(snakePlayer.body_state)
+
+    snakePlayer.moveSnake()
+    print(snakePlayer.body_state)
+    snakePlayer.moveSnake()
+    print(snakePlayer.body_state)
+    snakePlayer.moveSnake()
+    print(snakePlayer.body_state)
+    snakePlayer.current_action = 'L'
+    snakePlayer.moveSnake()
+    print(snakePlayer.body_state)
