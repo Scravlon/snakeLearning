@@ -1,4 +1,5 @@
-import pygame, random, sys
+# import pygame, random, sys
+import random
 import numpy as np
 
 
@@ -49,6 +50,15 @@ class Maze:
         elif a == 'R':
             return self.cooTostate((r, c+1))
 
+    def generate_food(self):
+        x = self.world
+        food = 0
+        i = random.randint(0, len(x))
+        j = random.randint(0, len(x))
+        while food == 0:
+            x[i][j] = 1
+            food += 1
+
     '''
     Reward with only maze
     '''
@@ -91,7 +101,6 @@ class SnakePlayer:
 
         #update state too
 
-
 if __name__=="__main__":
 
     iniState = np.array([
@@ -132,3 +141,4 @@ if __name__=="__main__":
     snakePlayer.current_action = 'L'
     snakePlayer.moveSnake()
     print(snakePlayer.body_state)
+    snakePlayer.generate_food()
