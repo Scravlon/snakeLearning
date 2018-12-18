@@ -60,6 +60,7 @@ class Maze:
             food += 1
 
 
+
     '''
     Reward with only maze
     '''
