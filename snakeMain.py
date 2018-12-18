@@ -141,4 +141,4 @@ if __name__=="__main__":
     snakePlayer.current_action = 'L'
     snakePlayer.moveSnake()
     print(snakePlayer.body_state)
-    snakePlayer.generate_food()
+    Maze.generate_food(snakeMaze)
