@@ -55,7 +55,7 @@ class Maze:
         food = 0
         i = random.randint(0, len(x))
         j = random.randint(0, len(x))
-        while food == 0:
+        while food == 0 and x[i][j] != snakePlayer.body_state:
             x[i][j] = 1
             food += 1
 
