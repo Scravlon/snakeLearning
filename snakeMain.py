@@ -9,7 +9,7 @@ class Maze:
         self.worldShape = world.shape
         self.stateSize = self.worldShape[0] * self.worldShape[1]
         self.gameRunning = True
-        self.reward = self.makereward()
+        self.reward = self.defReward()
 
         self.mapSize = 100
         self.actions = {'U', 'D', 'L', 'R'}
@@ -60,10 +60,9 @@ class Maze:
             food += 1
 
     '''
-    Reward with only maze
+    Default reward all edge -2
     '''
-    def makereward(self):
-        print("Reward")
+    def defReward(self):
         return np.array([
         [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2],
         [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
@@ -77,12 +76,37 @@ class Maze:
         [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
         [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2]])
 
+    '''
+    Reward with maze, food location (+5). body state (-2), border state (-2)
+    '''
+    def makereward(self, body_state, food_state):
+        r = np.array([
+        [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2],
+        [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
+        [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
+        [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
+        [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
+        [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
+        [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
+        [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
+        [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
+        [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
+        [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2]])
+
+        for a in body_state:
+            i,j = self.stateTocoo(a)
+            r[i][j] = r[i][j] - 2
+        i,j = self.stateTocoo(food_state)
+        r[i][j] = r[i][j] + 5
+        return r
+
 
 class SnakePlayer:
     def __init__(self, maze):
+        self.food_state = -1
         self.body_length = 2
         self.tail_state = 71
-        self.body_state = [60,71]
+        self.body_state = [60, 71]
         self.current_action = 'U'
         self.actions = {'U', 'D', 'L', 'R'}
         self.maze = maze
