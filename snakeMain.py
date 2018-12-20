@@ -50,14 +50,18 @@ class Maze:
         elif a == 'R':
             return self.cooTostate((r, c+1))
 
-    def generate_food(self):
-        x = self.world
-        food = 0
-        i = random.randint(0, len(x))
-        j = random.randint(0, len(x))
-        while food == 0 and x[i][j] != snakePlayer.body_state:
-            x[i][j] = 1
-            food += 1
+    def generate_food(self, body_state):
+
+        i = random.randint(1, 10)
+        j = random.randint(1, 10)
+        c = [i,j]
+        foodState = self.cooTostate(c)
+        while foodState in body_state:
+            i = random.randint(1, 10)
+            j = random.randint(1, 10)
+            c = [i, j]
+            foodState = self.cooTostate(c)
+        return foodState
 
     '''
     Default reward all edge -2
@@ -65,6 +69,7 @@ class Maze:
     def defReward(self):
         return np.array([
         [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2],
+        [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
         [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
         [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
         [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
@@ -82,6 +87,7 @@ class Maze:
     def makereward(self, body_state, food_state):
         r = np.array([
         [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2],
+        [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
         [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
         [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
         [-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2],
@@ -110,6 +116,7 @@ class SnakePlayer:
         self.current_action = 'U'
         self.actions = {'U', 'D', 'L', 'R'}
         self.maze = maze
+        self.generate_food_maze()
 
     def increase_length(self):
         self.body_length = self.body_length + 1
@@ -125,8 +132,17 @@ class SnakePlayer:
 
         #update state too
 
+    def generate_food_maze(self):
+        retVal = self.maze.generate_food(self.body_state)
+        self.food_state = retVal
+        return retVal
+
+    '''
+    Visualize body location return matrix
+    '''
     def body_np(self):
         retVal = np.array([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -147,6 +163,7 @@ class SnakePlayer:
 if __name__=="__main__":
 
     snakeMaze = Maze(np.array([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -181,5 +198,7 @@ if __name__=="__main__":
     snakePlayer.moveSnake()
     print(snakePlayer.body_state)
     print(snakePlayer.body_np())
+
+    print(snakePlayer.maze.makereward(snakePlayer.body_state,snakePlayer.food_state))
 
     # snakePlayer.maze.generate_food()
