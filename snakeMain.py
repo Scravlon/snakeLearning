@@ -106,7 +106,7 @@ class SnakePlayer:
         self.food_state = -1
         self.body_length = 2
         self.tail_state = 71
-        self.body_state = [60, 71]
+        self.body_state = [65, 77]
         self.current_action = 'U'
         self.actions = {'U', 'D', 'L', 'R'}
         self.maze = maze
@@ -125,20 +125,27 @@ class SnakePlayer:
 
         #update state too
 
+    def body_np(self):
+        retVal = np.array([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+
+        for a in self.body_state:
+            r,c = self.maze.stateTocoo(a)
+            retVal[r][c] = 1
+        return retVal
+
 if __name__=="__main__":
 
-    # iniState = np.array([
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
     snakeMaze = Maze(np.array([
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -157,13 +164,22 @@ if __name__=="__main__":
     snakePlayer = SnakePlayer(snakeMaze)
     print(snakePlayer.body_state)
 
+    print(snakePlayer.body_np())
+
     snakePlayer.moveSnake()
     print(snakePlayer.body_state)
+    print(snakePlayer.body_np())
     snakePlayer.moveSnake()
     print(snakePlayer.body_state)
+    print(snakePlayer.body_np())
+
     snakePlayer.moveSnake()
     print(snakePlayer.body_state)
+    print(snakePlayer.body_np())
+
     snakePlayer.current_action = 'L'
     snakePlayer.moveSnake()
     print(snakePlayer.body_state)
+    print(snakePlayer.body_np())
+
     # snakePlayer.maze.generate_food()
