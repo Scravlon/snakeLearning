@@ -138,6 +138,29 @@ class SnakePlayer:
         return retVal
 
     '''
+    Game over
+    '''
+    def wall_state(self):
+        maze = self.maze.world
+        snake_head = self.maze.stateTocoo(self.body_state[0])
+        for i in range(len(self.maze.world)):
+            for j in range(len(self.maze.world)):
+                if i == 0 or i == len(self.maze.world) - 1 or j == 0 or j == len(self.maze.world) - 1:
+                    maze[i][j] = -1
+        return maze
+
+    def snake_die(self):
+        live = True
+        snake_head = self.maze.stateTocoo(self.body_state[0])
+        maze = self.wall_state()
+        for i in range(len(maze)):
+            for j in range(len(maze)):
+                if self.maze.cooTostate(snake_head) == -1:
+                    live = False
+        return 'game over'
+
+
+    '''
     Visualize body location return matrix
     '''
     def body_np(self):
@@ -179,26 +202,26 @@ if __name__=="__main__":
     # print(iniState[r][c])
 
     snakePlayer = SnakePlayer(snakeMaze)
-    print(snakePlayer.body_state)
-
-    print(snakePlayer.body_np())
-
-    snakePlayer.moveSnake()
-    print(snakePlayer.body_state)
-    print(snakePlayer.body_np())
-    snakePlayer.moveSnake()
-    print(snakePlayer.body_state)
-    print(snakePlayer.body_np())
-
-    snakePlayer.moveSnake()
-    print(snakePlayer.body_state)
-    print(snakePlayer.body_np())
-
-    snakePlayer.current_action = 'L'
-    snakePlayer.moveSnake()
-    print(snakePlayer.body_state)
-    print(snakePlayer.body_np())
-
-    print(snakePlayer.maze.makereward(snakePlayer.body_state,snakePlayer.food_state))
-
+    # print(snakePlayer.body_state)
+    #
+    # print(snakePlayer.body_np())
+    #
+    # snakePlayer.moveSnake()
+    # print(snakePlayer.body_state)
+    # print(snakePlayer.body_np())
+    # snakePlayer.moveSnake()
+    # print(snakePlayer.body_state)
+    # print(snakePlayer.body_np())
+    #
+    # snakePlayer.moveSnake()
+    # print(snakePlayer.body_state)
+    # print(snakePlayer.body_np())
+    #
+    # snakePlayer.current_action = 'L'
+    # snakePlayer.moveSnake()
+    # print(snakePlayer.body_state)
+    # print(snakePlayer.body_np())
+    #
+    # print(snakePlayer.maze.makereward(snakePlayer.body_state,snakePlayer.food_state))
+    snakePlayer.snake_die()
     # snakePlayer.maze.generate_food()
