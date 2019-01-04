@@ -117,6 +117,7 @@ class SnakePlayer:
         self.actions = {'U', 'D', 'L', 'R'}
         self.maze = maze
         self.generate_food_maze()
+        self.Q = np.zeros((144,4))
 
     def increase_length(self):
         self.body_length = self.body_length + 1
@@ -153,6 +154,7 @@ class SnakePlayer:
         live = True
         snake_head = self.maze.stateTocoo(self.body_state[0])
         maze = self.wall_state()
+        # print(maze)
         for i in range(len(maze)):
             for j in range(len(maze)):
                 if self.maze.cooTostate(snake_head) == -1:
@@ -183,6 +185,21 @@ class SnakePlayer:
             retVal[r][c] = 1
         return retVal
 
+    def epsG(self, ep : float = 0.3):
+        if random.uniform(0,1) < ep:
+            return self.actions[random.randrange(0,len(self.actions))]
+        else:
+            return self.bestAction()
+
+    def bestAction(self):
+        retVal= self.actions[np.argmax(self.Q[self.body_state[0],:],axis=0)]
+        self.current_action = retVal
+        return retVal
+
+    def qstep(self):
+        action = self.epsG(0.3)
+        # nextS, reward = self.
+        return ''
 if __name__=="__main__":
 
     snakeMaze = Maze(np.array([
